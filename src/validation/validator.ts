@@ -13,22 +13,37 @@ export async function validator(
   context: Context,
   modelClient: IModelClient = new ClaudeCli()
 ): Promise<ValidationResult> {
-  try {
-    const prompt = generateDynamicContext(context)
-    const response = await modelClient.ask(prompt)
-    return parseModelResponse(response)
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error'
-    const reason =
-      errorMessage === 'No response from model'
-        ? 'No response from model, try again'
-        : `Error during validation: ${errorMessage}`
+  const prompt = generateDynamicContext(context)
 
-    return {
-      decision: 'block',
-      reason,
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const response = await modelClient.ask(prompt)
+      return parseModelResponse(response)
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error'
+
+      // Only retry on "No response from model" errors
+      if (errorMessage === 'No response from model' && attempt < 2) {
+        continue
+      }
+
+      const reason =
+        errorMessage === 'No response from model'
+          ? 'No response from model, try again'
+          : `Error during validation: ${errorMessage}`
+
+      return {
+        decision: 'block',
+        reason,
+      }
     }
+  }
+
+  // This should never be reached, but satisfies TypeScript
+  return {
+    decision: 'block',
+    reason: 'Unexpected error in validation retry logic',
   }
 }
 
