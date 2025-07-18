@@ -5,8 +5,12 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
 1. **Red Phase**: Write ONE failing test that describes desired behavior
    - The test must fail for the RIGHT reason (not syntax/import errors)
-   - Only one test at a time - this is critical for TDD discipline
-   - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
+   - **Primary rule**: One test at a time maintains TDD discipline
+   - **Flexibility for related tests**: 2-3 closely related tests may be acceptable when:
+     - Testing the same behavior with different inputs (parameterized tests)
+     - Testing edge cases of a single function
+     - Setting up initial test structure with related scenarios
+   - **Adding tests to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
@@ -23,8 +27,13 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 ### Core Violations
 
 1. **Multiple Test Addition**
-   - Adding more than one new test at once
-   - Exception: Initial test file setup or extracting shared test utilities
+   - Adding 4+ tests at once is a violation
+   - Adding unrelated tests (testing different functions/behaviors) is a violation
+   - **Acceptable exceptions**:
+     - 2-3 related tests for the same behavior (e.g., happy path + edge cases)
+     - Parameterized test patterns
+     - Initial test file setup with related test structure
+     - Extracting shared test utilities
 
 2. **Over-Implementation**  
    - Code that exceeds what's needed to pass the current failing test

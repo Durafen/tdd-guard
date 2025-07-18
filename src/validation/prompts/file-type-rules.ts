@@ -7,14 +7,19 @@ export const FILE_TYPE_RULES = `## File Type Specific Rules
 ### Test File Rules
 
 #### Always Allowed:
-- **Adding ONE new test** - This is ALWAYS allowed regardless of test output (foundation of TDD cycle)
+- **Adding tests** - This is ALWAYS allowed regardless of test output (foundation of TDD cycle)
+- **One test preferred** - But 2-3 related tests are acceptable when:
+  - Testing the same function with different inputs
+  - Testing edge cases of the same behavior
+  - Setting up parameterized test patterns
 - Modifying existing tests without adding new ones
 - Setting up test infrastructure and utilities
 
-**CRITICAL**: Adding a single test to a test file does NOT require prior test output. Writing the first failing test is the start of the TDD cycle.
+**CRITICAL**: Adding tests to a test file does NOT require prior test output. Writing the first failing test is the start of the TDD cycle.
 
 #### Violations:
-- Adding multiple new tests simultaneously
+- Adding 4+ tests simultaneously
+- Adding unrelated tests (different functions/behaviors)
 - Refactoring tests without running them first
 
 #### Refactoring Tests:

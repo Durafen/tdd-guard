@@ -13,6 +13,7 @@ export type ConfigOptions = {
   anthropicApiKey?: string
   modelType?: string
   linterType?: string
+  strictOneTestRule?: boolean
 }
 
 export class Config {
@@ -21,6 +22,7 @@ export class Config {
   readonly anthropicApiKey: string | undefined
   readonly modelType: string
   readonly linterType: string | undefined
+  readonly strictOneTestRule: boolean
 
   constructor(options?: ConfigOptions) {
     const mode = options?.mode ?? 'production'
@@ -30,6 +32,7 @@ export class Config {
     this.anthropicApiKey = this.getAnthropicApiKey(options)
     this.modelType = this.getModelType(options, mode)
     this.linterType = this.getLinterType(options)
+    this.strictOneTestRule = options?.strictOneTestRule ?? false
   }
 
   private getDataDir(options?: ConfigOptions): string {

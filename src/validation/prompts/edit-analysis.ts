@@ -21,14 +21,19 @@ You are reviewing an Edit operation where existing code is being modified. You m
    - NOT: Reformatting or refactoring existing tests
 
 3. **Multiple test check:**
-   - One new test = Allowed (part of TDD cycle)
-   - Two or more new tests = Violation
+   - One new test = Always allowed (part of TDD cycle)
+   - 2-3 related tests = Allowed if they test the same behavior/function
+   - 4+ tests = Violation (too many at once)
+   - Unrelated tests = Violation (should focus on one behavior)
 
 **Example**: If old content has 1 test and new content has 2 tests, that's adding 1 new test (allowed), NOT 2 tests total.
 
 ### Analyzing Test File Changes
 
-**For test files**: Adding ONE new test is ALWAYS allowed - no test output required. This is the foundation of TDD.
+**For test files**: 
+- Adding tests is ALWAYS allowed - no test output required. This is the foundation of TDD.
+- Prefer one test at a time, but 2-3 related tests are acceptable when testing variations of the same behavior.
+- Related tests should be in the same describe block or clearly testing the same function.
 
 ### Analyzing Implementation File Changes
 

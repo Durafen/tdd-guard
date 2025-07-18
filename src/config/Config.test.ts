@@ -52,6 +52,18 @@ describe('Config', () => {
     })
   })
 
+  describe('strictOneTestRule', () => {
+    test('defaults to false when not provided', () => {
+      const config = new Config()
+      expect(config.strictOneTestRule).toBe(false)
+    })
+
+    test('can be set to true via options', () => {
+      const config = new Config({ strictOneTestRule: true })
+      expect(config.strictOneTestRule).toBe(true)
+    })
+  })
+
   describe('useSystemClaude', () => {
     test('can be set via options', () => {
       const config = new Config({ useSystemClaude: true })
