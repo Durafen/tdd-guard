@@ -14,6 +14,7 @@ export type ConfigOptions = {
   modelType?: string
   linterType?: string
   strictOneTestRule?: boolean
+  debugEnabled?: boolean
 }
 
 export class Config {
@@ -23,6 +24,7 @@ export class Config {
   readonly modelType: string
   readonly linterType: string | undefined
   readonly strictOneTestRule: boolean
+  readonly debugEnabled: boolean
 
   constructor(options?: ConfigOptions) {
     const mode = options?.mode ?? 'production'
@@ -33,6 +35,7 @@ export class Config {
     this.modelType = this.getModelType(options, mode)
     this.linterType = this.getLinterType(options)
     this.strictOneTestRule = options?.strictOneTestRule ?? false
+    this.debugEnabled = options?.debugEnabled ?? process.env.TDD_GUARD_DEBUG === 'true'
   }
 
   private getDataDir(options?: ConfigOptions): string {

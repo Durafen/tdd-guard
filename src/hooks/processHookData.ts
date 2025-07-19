@@ -13,11 +13,14 @@ import { detectFileType } from './fileTypeDetection'
 import { LinterProvider } from '../providers/LinterProvider'
 import { UserPromptHandler } from './userPromptHandler'
 import { GuardManager } from '../guard/GuardManager'
+import { DebugLogger } from '../utils/DebugLogger'
+import { Config } from '../config/Config'
 
 export interface ProcessHookDataDeps {
   storage?: Storage
   validator?: (context: Context) => Promise<ValidationResult>
   userPromptHandler?: UserPromptHandler
+  config?: Config
 }
 
 export const defaultResult: ValidationResult = {
@@ -29,7 +32,13 @@ export async function processHookData(
   inputData: string,
   deps: ProcessHookDataDeps = {}
 ): Promise<ValidationResult> {
+  const config = deps.config ?? new Config()
+  const debugLogger = new DebugLogger(config)
+  
+  debugLogger.saveDebugInfo(`${'='.repeat(60)}\nTDD GUARD HOOK STARTED\n${inputData}\n\n`, 'w', true)
+  
   const parsedData = JSON.parse(inputData)
+  debugLogger.saveDebugInfo(`PARSED HOOK DATA:\n${JSON.stringify(parsedData, null, 2)}\n\n`)
   
   // Initialize dependencies
   const storage = deps.storage ?? new FileStorage()
@@ -42,8 +51,10 @@ export async function processHookData(
   // Check if guard is disabled and return early if so
   const disabledResult = await userPromptHandler.getDisabledResult()
   if (disabledResult) {
+    debugLogger.saveDebugInfo(`GUARD DISABLED - EARLY EXIT:\n${JSON.stringify(disabledResult, null, 2)}\n\n`)
     return disabledResult
   }
+  debugLogger.saveDebugInfo(`GUARD ENABLED - CONTINUING PROCESSING\n\n`)
 
   // Create lintHandler with linter from provider
   const linterProvider = new LinterProvider()
@@ -53,29 +64,40 @@ export async function processHookData(
 
   const hookResult = HookDataSchema.safeParse(parsedData)
   if (!hookResult.success) {
+    debugLogger.saveDebugInfo(`HOOK DATA VALIDATION FAILED:\n${JSON.stringify(hookResult.error, null, 2)}\n\n`)
     return defaultResult
   }
+  debugLogger.saveDebugInfo(`HOOK DATA VALIDATION PASSED\n\n`)
 
   await processHookEvent(parsedData, storage)
 
   // Check if this is a PostToolUse event
   if (hookResult.data.hook_event_name === 'PostToolUse') {
+    debugLogger.saveDebugInfo(`POSTTOOLUSE EVENT - HANDLING LINT\n\n`)
     return await lintHandler.handle(inputData)
   }
 
   if (shouldSkipValidation(hookResult.data)) {
+    debugLogger.saveDebugInfo(`VALIDATION SKIPPED - NON-CODE FILE OR TODO OPERATION\n\n`)
     return defaultResult
   }
+  debugLogger.saveDebugInfo(`VALIDATION REQUIRED - PROCEEDING\n\n`)
 
   // For PreToolUse, check if we should notify about lint issues
   if (hookResult.data.hook_event_name === 'PreToolUse') {
     const lintNotification = await checkLintNotification(storage, hookResult.data)
     if (lintNotification.decision === 'block') {
+      debugLogger.saveDebugInfo(`LINT NOTIFICATION BLOCKING:\n${JSON.stringify(lintNotification, null, 2)}\n\n`)
       return lintNotification
     }
+    debugLogger.saveDebugInfo(`LINT NOTIFICATION PASSED\n\n`)
   }
 
-  return await performValidation(deps, hookResult.data)
+  debugLogger.saveDebugInfo(`STARTING MAIN VALIDATION\n\n`)
+  const result = await performValidation(deps, hookResult.data)
+  debugLogger.saveDebugInfo(`FINAL RESULT:\n${JSON.stringify(result, null, 2)}\n\n`)
+  
+  return result
 }
 
 async function processHookEvent(parsedData: unknown, storage?: Storage): Promise<void> {

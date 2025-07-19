@@ -77,8 +77,9 @@ Configure TDD Guard using the `/hooks` command:
 
 #### For JavaScript/TypeScript (Vitest)
 
-Add the TDD Guard reporter to your `vitest.config.ts`:
+Add the TDD Guard reporter to your vitest config:
 
+**ES Modules** (`vitest.config.ts` or `vitest.config.js`):
 ```typescript
 import { VitestReporter } from 'tdd-guard'
 
@@ -88,6 +89,19 @@ export default defineConfig({
   },
 })
 ```
+
+**CommonJS** (`vitest.config.js`):
+```javascript
+const { VitestReporter } = require('tdd-guard')
+
+module.exports = defineConfig({
+  test: {
+    reporters: ['default', new VitestReporter()],
+  },
+})
+```
+
+> **Note**: Use CommonJS format if your `package.json` has `"type": "commonjs"` or no type field. See [Configuration Guide](docs/CONFIGURATION.md#module-compatibility-issues) for troubleshooting.
 
 #### For Python (pytest)
 

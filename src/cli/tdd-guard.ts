@@ -15,14 +15,15 @@ export async function run(
   storage?: Storage,
   provider?: ModelClientProvider
 ): Promise<ValidationResult> {
-  const appConfig = config ?? new Config()
+  const appConfig = config ?? new Config({ debugEnabled: true })
   const actualStorage = storage ?? new FileStorage(appConfig)
   const modelProvider = provider ?? new ModelClientProvider()
   const modelClient = modelProvider.getModelClient(appConfig)
 
   return processHookData(input, {
     storage: actualStorage,
-    validator: (context) => validator(context, modelClient),
+    validator: (context) => validator(context, modelClient, appConfig),
+    config: appConfig,
   })
 }
 

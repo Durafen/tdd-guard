@@ -3,6 +3,8 @@ import { IModelClient } from '../contracts/types/ModelClient'
 import { ValidationResult } from '../contracts/types/ValidationResult'
 import { Context } from '../contracts/types/Context'
 import { generateDynamicContext } from './context/context'
+import { DebugLogger } from '../utils/DebugLogger'
+import { Config } from '../config/Config'
 
 interface ModelResponseJson {
   decision: 'block' | 'approve' | null
@@ -11,13 +13,27 @@ interface ModelResponseJson {
 
 export async function validator(
   context: Context,
-  modelClient: IModelClient = new ClaudeCli()
+  modelClient: IModelClient = new ClaudeCli(),
+  config: Config = new Config()
 ): Promise<ValidationResult> {
+  const debugLogger = new DebugLogger(config)
+  
   try {
+    debugLogger.logValidationStart(context)
+    
     const prompt = generateDynamicContext(context)
+    debugLogger.logPrompt(prompt)
+    
     const response = await modelClient.ask(prompt)
-    return parseModelResponse(response)
+    debugLogger.logModelResponse(response)
+    
+    const result = parseModelResponse(response)
+    debugLogger.logFinalDecision(result)
+    
+    return result
   } catch (error) {
+    debugLogger.logError(error)
+    
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error'
     const reason =
@@ -25,10 +41,13 @@ export async function validator(
         ? 'No response from model, try again'
         : `Error during validation: ${errorMessage}`
 
-    return {
-      decision: 'block',
+    const result = {
+      decision: 'block' as const,
       reason,
     }
+    
+    debugLogger.logFinalDecision(result)
+    return result
   }
 }
 

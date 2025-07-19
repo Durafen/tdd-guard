@@ -16,6 +16,11 @@ export class VitestReporter implements Reporter {
 
   constructor(storage?: Storage) {
     this.storage = storage ?? new FileStorage()
+    
+    // Log successful instantiation to help with troubleshooting
+    if (process.env.TDD_GUARD_DEBUG || process.env.NODE_ENV === 'development') {
+      console.log('[TDD Guard] VitestReporter successfully instantiated')
+    }
   }
 
   onTestModuleCollected(testModule: TestModule): void {

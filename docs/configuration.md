@@ -115,13 +115,32 @@ First, ensure Vitest is installed in your project:
 npm install --save-dev vitest
 ```
 
-Then configure it in `vitest.config.ts`:
+Then configure it based on your project's module type:
+
+#### ES Modules (package.json has `"type": "module"`)
+
+Configure in `vitest.config.ts` or `vitest.config.js`:
 
 ```typescript
 import { defineConfig } from 'vitest/config'
 import { VitestReporter } from 'tdd-guard'
 
 export default defineConfig({
+  test: {
+    reporters: ['default', new VitestReporter()],
+  },
+})
+```
+
+#### CommonJS (package.json has `"type": "commonjs"` or no type field)
+
+Configure in `vitest.config.js`:
+
+```javascript
+const { defineConfig } = require('vitest/config')
+const { VitestReporter } = require('tdd-guard')
+
+module.exports = defineConfig({
   test: {
     reporters: ['default', new VitestReporter()],
   },
@@ -166,6 +185,64 @@ TDD Guard stores context data in `.claude/tdd-guard/data/`:
 This directory is created automatically and should be added to `.gitignore`.
 
 ## Troubleshooting
+
+### Module Compatibility Issues
+
+#### Vitest Config Not Loading VitestReporter
+
+**Symptoms**: Tests run successfully but `test.json` file is not updated, TDD Guard blocks edits claiming "no test output available"
+
+**Common Causes**:
+
+1. **ES Module vs CommonJS Mismatch**
+   
+   If you see errors like `Cannot use import statement outside a module`, your `vitest.config.js` uses ES imports but your project is configured for CommonJS.
+   
+   **Solution**: Use the CommonJS configuration format:
+   ```javascript
+   const { defineConfig } = require('vitest/config')
+   const { VitestReporter } = require('tdd-guard')
+   
+   module.exports = defineConfig({
+     test: {
+       reporters: ['default', new VitestReporter()],
+     },
+   })
+   ```
+
+2. **Missing TDD Guard Package**
+   
+   If you see `Cannot find module 'tdd-guard'`, ensure TDD Guard is installed:
+   ```bash
+   npm install --save-dev tdd-guard
+   # or
+   npm install ../path/to/tdd-guard  # for local development
+   ```
+
+3. **Config File Not Found**
+   
+   Vitest may not be finding your config file. Explicitly specify it:
+   ```bash
+   npx vitest --config ./vitest.config.js
+   ```
+
+**Testing Your Configuration**:
+
+1. Test config loading:
+   ```bash
+   # For ES modules
+   node -e "import('./vitest.config.js').then(console.log)"
+   
+   # For CommonJS  
+   node -e "console.log(require('./vitest.config.js'))"
+   ```
+
+2. Verify VitestReporter instantiation by adding debug logging:
+   ```javascript
+   console.log('Loading VitestReporter...')
+   const { VitestReporter } = require('tdd-guard')
+   console.log('VitestReporter loaded successfully')
+   ```
 
 ### Claude CLI Issues
 
