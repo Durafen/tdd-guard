@@ -105,7 +105,10 @@ describe('processHookData', () => {
     const result = await sut.process(TODO_WRITE_HOOK_DATA)
 
     expect(sut.validatorHasBeenCalled()).toBe(false)
-    expect(result).toEqual(defaultResult)
+    expect(result).toEqual({
+      decision: 'block',
+      reason: '💡 Todo updated! Remember to run tests after implementing changes to verify they pass (Green phase verification). Click again to proceed.'
+    })
   })
 
   it('should handle hook data with invalid schema gracefully', async () => {

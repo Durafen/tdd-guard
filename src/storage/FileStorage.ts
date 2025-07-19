@@ -81,4 +81,29 @@ export class FileStorage implements Storage {
   async getConfig(): Promise<string | null> {
     return this.get('config')
   }
+
+  async saveReminderAttempt(key: string, timestamp: number): Promise<void> {
+    await this.ensureDirectory()
+    const filePath = `${this.config.dataDir}/reminder_${key}.json`
+    await fs.writeFile(filePath, timestamp.toString())
+  }
+
+  async getReminderAttempt(key: string): Promise<number | null> {
+    try {
+      const filePath = `${this.config.dataDir}/reminder_${key}.json`
+      const content = await fs.readFile(filePath, 'utf-8')
+      return parseInt(content)
+    } catch {
+      return null
+    }
+  }
+
+  async clearReminderAttempt(key: string): Promise<void> {
+    try {
+      const filePath = `${this.config.dataDir}/reminder_${key}.json`
+      await fs.unlink(filePath)
+    } catch {
+      // File might not exist, ignore
+    }
+  }
 }

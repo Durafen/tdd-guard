@@ -9,4 +9,7 @@ export interface Storage {
   getModifications(): Promise<string | null>
   getLint(): Promise<string | null>
   getConfig(): Promise<string | null>
+  saveReminderAttempt(key: string, timestamp: number): Promise<void>
+  getReminderAttempt(key: string): Promise<number | null>
+  clearReminderAttempt(key: string): Promise<void>
 }

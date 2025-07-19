@@ -76,3 +76,7 @@ htmlcov/
 
 # Claude indexer
 .claude-indexer/
+.tdd-guard
+memory_guard_debug.txt
+.claude/.claude/tdd-guard/data/tdd_guard_debug.txt
+.claude/.claude/tdd-guard/data/todos.json

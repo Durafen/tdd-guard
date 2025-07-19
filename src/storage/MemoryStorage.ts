@@ -42,4 +42,17 @@ export class MemoryStorage implements Storage {
   async getConfig(): Promise<string | null> {
     return this.store.get('config') ?? null
   }
+
+  async saveReminderAttempt(key: string, timestamp: number): Promise<void> {
+    this.store.set(`reminder_${key}`, timestamp.toString())
+  }
+
+  async getReminderAttempt(key: string): Promise<number | null> {
+    const value = this.store.get(`reminder_${key}`)
+    return value ? parseInt(value) : null
+  }
+
+  async clearReminderAttempt(key: string): Promise<void> {
+    this.store.delete(`reminder_${key}`)
+  }
 }

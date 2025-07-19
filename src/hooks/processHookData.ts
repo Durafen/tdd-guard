@@ -77,8 +77,37 @@ export async function processHookData(
     return await lintHandler.handle(inputData)
   }
 
+  // Handle TodoWrite operations with message
+  const operationResult = ToolOperationSchema.safeParse({
+    ...hookResult.data,
+    tool_input: hookResult.data.tool_input,
+  })
+  
+  if (operationResult.success && isTodoWriteOperation(operationResult.data)) {
+    debugLogger.saveDebugInfo(`TODO WRITE OPERATION - CHECKING REMINDER ATTEMPT\n\n`)
+    
+    // Simple key for tracking reminder attempts
+    const todoKey = 'last_reminder_shown'
+    
+    // Check if we already blocked once
+    const previousAttempt = await storage.getReminderAttempt(todoKey)
+    if (previousAttempt) {
+      debugLogger.saveDebugInfo(`SECOND ATTEMPT - ALLOWING\n\n`)
+      await storage.clearReminderAttempt(todoKey)
+      return { decision: 'approve', reason: '' }
+    }
+    
+    // First attempt - mark and block
+    await storage.saveReminderAttempt(todoKey, Date.now())
+    debugLogger.saveDebugInfo(`FIRST ATTEMPT - BLOCKING WITH REMINDER\n\n`)
+    return {
+      decision: 'block',
+      reason: '💡 Todo updated! Remember to run tests after implementing changes to verify they pass (Green phase verification). Click again to proceed.'
+    }
+  }
+
   if (shouldSkipValidation(hookResult.data)) {
-    debugLogger.saveDebugInfo(`VALIDATION SKIPPED - NON-CODE FILE OR TODO OPERATION\n\n`)
+    debugLogger.saveDebugInfo(`VALIDATION SKIPPED - NON-CODE FILE\n\n`)
     return defaultResult
   }
   debugLogger.saveDebugInfo(`VALIDATION REQUIRED - PROCEEDING\n\n`)
