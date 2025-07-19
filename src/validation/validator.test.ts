@@ -122,12 +122,12 @@ More analysis after the error message.
 
 {
   "decision": "block",
-  "reason": "Over-implementation: Test fails with 'Calculator is not a constructor' but you're adding both the class AND the add method. Should only create empty class first, then run test again to get proper failure for the add method."
+  "reason": "Over-implementation: Test fails with 'Calculator is not a constructor' but you're adding both the class AND the add method. Should only create empty class first, then run test again with vitest/pytest to get proper failure for the add method."
 }`,
         expected: {
           decision: 'block',
           reason:
-            "Over-implementation: Test fails with 'Calculator is not a constructor' but you're adding both the class AND the add method. Should only create empty class first, then run test again to get proper failure for the add method.",
+            "Over-implementation: Test fails with 'Calculator is not a constructor' but you're adding both the class AND the add method. Should only create empty class first, then run test again with vitest/pytest to get proper failure for the add method.",
         },
       },
       {
@@ -146,12 +146,12 @@ Analysis continues after the code block.
 
 {
   "decision": "block",
-  "reason": "Over-implementation violation. Test fails with 'Calculator is not defined' but implementation adds both class AND add method. Should only create empty class first, then run test to get next failure."
+  "reason": "Over-implementation violation. Test fails with 'Calculator is not defined' but implementation adds both class AND add method. Should only create empty class first, then run test with vitest/pytest to get next failure."
 }`,
         expected: {
           decision: 'block',
           reason:
-            "Over-implementation violation. Test fails with 'Calculator is not defined' but implementation adds both class AND add method. Should only create empty class first, then run test to get next failure.",
+            "Over-implementation violation. Test fails with 'Calculator is not defined' but implementation adds both class AND add method. Should only create empty class first, then run test with vitest/pytest to get next failure.",
         },
       },
       {

@@ -102,7 +102,7 @@ export async function processHookData(
     debugLogger.saveDebugInfo(`FIRST ATTEMPT - BLOCKING WITH REMINDER\n\n`)
     return {
       decision: 'block',
-      reason: '💡 Todo updated! Remember to run tests after implementing changes to verify they pass (Green phase verification). Click again to proceed.'
+      reason: '💡 About to update todos! Remember to run tests after implementing changes to verify they pass (Green phase verification). Click again to proceed.'
     }
   }
 

@@ -20,7 +20,7 @@ export const FILE_TYPE_RULES = `## File Type Specific Rules
 #### Violations:
 - Adding 4+ tests simultaneously
 - Adding unrelated tests (different functions/behaviors)
-- Refactoring tests without running them first
+- Refactoring tests without running them first with vitest/pytest
 
 #### Refactoring Tests:
 - ONLY allowed when relevant tests are passing
@@ -40,8 +40,8 @@ export const FILE_TYPE_RULES = `## File Type Specific Rules
 | "X is not a constructor" | Create empty class only |
 | "X is not a function" | Add method stub only |
 | Assertion error (e.g., "expected X to be Y") | Implement logic to pass assertion |
-| No test output | Nothing - must run test first |
-| Irrelevant test output | Nothing - must run relevant test |
+| No test output | Nothing - must run test first with vitest/pytest |
+| Irrelevant test output | Nothing - must run relevant test with vitest/pytest |
 
 #### Refactoring Implementation:
 - ONLY allowed when relevant tests are passing

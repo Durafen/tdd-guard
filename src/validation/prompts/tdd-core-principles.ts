@@ -42,7 +42,7 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
 3. **Premature Implementation**
    - Adding implementation before a test exists and fails properly
-   - Adding implementation without running the test first
+   - Adding implementation without running the test first with vitest/pytest
    - Refactoring when tests haven't been run or are failing
 
 ### Critical Principle: Incremental Development

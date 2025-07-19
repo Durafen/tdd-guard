@@ -107,7 +107,7 @@ describe('processHookData', () => {
     expect(sut.validatorHasBeenCalled()).toBe(false)
     expect(result).toEqual({
       decision: 'block',
-      reason: '💡 Todo updated! Remember to run tests after implementing changes to verify they pass (Green phase verification). Click again to proceed.'
+      reason: '💡 About to update todos! Remember to run tests after implementing changes to verify they pass (Green phase verification). Click again to proceed.'
     })
   })
 
